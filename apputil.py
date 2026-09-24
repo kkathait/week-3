@@ -42,19 +42,17 @@ df_bellevue = pd.read_csv(url)
 
 
 
+
+
 # Task 1
 def task_1():
-    # Fix the messy gender column name
-   
-    df = df_bellevue.rename(columns=lambda x: x.strip())
-    
-        # Count missing values
-    missing = df.isna().sum()
-    
-        # Sort from least to most missing values
-    sorted_columns = missing.sort_values(ascending=True).index.tolist()
-    
-    return sorted_columns
+
+    df_bellevue['gender'] = df_bellevue['gender'].replace(
+        ['?', 'g', 'h'],
+        np.nan
+    )
+
+    return df_bellevue.isna().sum().sort_values().index.tolist()
 
 
 # Task 2
