@@ -20,8 +20,12 @@ def fibonacci(n):
 def to_binary(n):
     if n == 0:
         return "0"
-    else:
-        return to_binary(n // 2) + str(n % 2)
+    if n == 1:
+        return "1"
+
+    return to_binary(n // 2) + str(n % 2)
+
+
 
 
 # Exercise 3
@@ -40,30 +44,32 @@ df_bellevue = pd.read_csv(url)
 
 # Task 1
 def task_1():
-    df = df_bellevue.copy()
-
-    # The gender column contains messy/missing values that need to be standardized
-    print("Cleaning the gender column before counting missing values.")
-
-    df["gender"] = df["gender"].replace(r"^\s*$", pd.NA, regex=True)
-
-    missing_counts = df.isna().sum()
-
-    return missing_counts.sort_values().index.tolist()
+    # Fix the messy gender column name
+   
+    df = df_bellevue.rename(columns=lambda x: x.strip())
+    
+        # Count missing values
+    missing = df.isna().sum()
+    
+        # Sort from least to most missing values
+    sorted_columns = missing.sort_values(ascending=True).index.tolist()
+    
+    return sorted_columns
 
 
 # Task 2
 def task_2():
     df = df_bellevue.copy()
 
-    print("Converting the year column to numeric in case it contains messy values.")
+    print("Extracting year from the date_in column.")
 
-    df["year"] = pd.to_numeric(df["year"], errors="coerce")
+    df["date_in"] = pd.to_datetime(df["date_in"])
+    df["year"] = df["date_in"].dt.year
 
     result = (
         df.groupby("year")
-          .size()
-          .reset_index(name="total_admissions")
+        .size()
+        .reset_index(name="total_admissions")
     )
 
     return result
@@ -92,6 +98,7 @@ def task_4():
     df["profession"] = df["profession"].replace(r"^\s*$", pd.NA, regex=True)
 
     return df["profession"].dropna().value_counts().head(5).index.tolist()
+
 
 # Exercise 4
 
